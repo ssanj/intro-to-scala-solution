@@ -47,7 +47,9 @@ object ExceptionExercises {
     *
     * Hint: use the trim method on String to remove empty spaces
     */
-  def getName(providedName: String) : String = ???
+  def getName(providedName: String) : String =
+    if (providedName.trim.isEmpty) throw new EmptyNameException("provided name is empty")
+    else providedName
 
   /**
     * Implement the function getAge, so that it either accepts the supplied age
@@ -66,7 +68,15 @@ object ExceptionExercises {
     *
     * Hint: use the toInt method to convert a String to an Int. Be warned that it can throw a NumberFormatException.
     */
-  def getAge(providedAge: String) : Int = ???
+  def getAge(providedAge: String) : Int = {
+    try {
+      val age = providedAge.toInt
+      if (age >= 1 && age <= 120) age
+      else throw new InvalidAgeRangeException(s"provided age should be between 1-120: $age")
+    } catch {
+      case _: NumberFormatException => throw new InvalidAgeValueException(s"provided age is invalid: $providedAge")
+    }
+  }
 
   /**
     * Implement the function createPerson, so that it either accepts a name and age
@@ -88,7 +98,11 @@ object ExceptionExercises {
     * scala> createPerson("Fred", "150")
     * = InvalidAgeRangeException: provided age should be between 1-120: 150"
     */
-  def createPerson(name: String, age: String): Person = ???
+  def createPerson(name: String, age: String): Person = {
+    val pName = getName(name)
+    val pAge  = getAge(age)
+    Person(pName, pAge)
+  }
 
   /**
     * Implement the function validPairs, that it uses the personStringPairs List
@@ -100,7 +114,18 @@ object ExceptionExercises {
     * Hint: use filter on List using the getName and getAge functions
     *
     */
-  def validPairs: List[(String, String)] = ???
+  def validPairs: List[(String, String)] = personStringPairs.filter {
+    case (name, age) =>
+      try {
+        getName(name)
+        getAge(age)
+        true
+      } catch {
+        case e: EmptyNameException       => false
+        case e: InvalidAgeValueException => false
+        case e: InvalidAgeRangeException => false
+      }
+  }
 
   /**
     * Implement the function createValidPeople that uses the validPairs function
@@ -112,7 +137,9 @@ object ExceptionExercises {
     * Hint: use the output of validPairs and the createPerson function
     *
     */
-  def createValidPeople: List[Person] = ???
+  def createValidPeople: List[Person] = validPairs.map {
+    case (name, age) => createPerson(name, age)
+  }
 
   /**
     * Implement the function createValidPeople2 that only uses the collect function on List
@@ -120,7 +147,15 @@ object ExceptionExercises {
     *
     * What issues due you run into (if any)?
     */
-  def createValidPeople2: List[Person] = ???
+  def createValidPeople2: List[Person] = {
+    personStringPairs.collect {
+      case (name, age) =>
+        try createPerson(name, age)
+        catch {
+          case (_: EmptyNameException | _: InvalidAgeValueException | _: InvalidAgeRangeException) => Person("", 0)
+        }
+    }.filterNot(_ == Person("", 0))
+  }
 
   /**
     * Implement the function collectErrors that collects all the Exceptions
@@ -135,5 +170,18 @@ object ExceptionExercises {
     * What issues due you run into (if any)?
     *
     */
-  def collectErrors: List[Exception] = ???
+  def collectErrors: List[Exception] = {
+    val dummy = new Exception
+    personStringPairs.collect {
+      case (name, age) =>
+        try {
+          createPerson(name, age)
+          dummy
+        } catch {
+          case e: EmptyNameException        => e
+          case e: InvalidAgeValueException  => e
+          case e: InvalidAgeRangeException  => e
+        }
+    }.filterNot(_ == dummy)
+  }
 }
