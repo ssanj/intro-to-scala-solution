@@ -15,7 +15,7 @@ object ExceptionExercises {
   class InvalidAgeRangeException(message: String) extends Exception(message)
 
   //test data of names and age pairs
-  private val personStringPairs =
+  val personStringPairs =
     List(("Tokyo", "30"),
          ("Moscow", "5o"),
          ("The Professor", "200"),
