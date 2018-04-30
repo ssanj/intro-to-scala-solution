@@ -26,6 +26,10 @@ class NullExercisesTest extends FunSpec with TypeCheckedTripleEquals {
       assert(mkTrafficLightOrNull("green") === Green)
     }
 
+    it("should return Flashing") {
+      assert(mkTrafficLightOrNull("flashing 100") === Flashing(100))
+    }
+
   }
 
   describe("mkTrafficLightOrNullThenShow") {
@@ -40,6 +44,10 @@ class NullExercisesTest extends FunSpec with TypeCheckedTripleEquals {
 
     it("should show Green traffic light") {
       assert(mkTrafficLightOrNullThenShow("green") === "Traffic light is green")
+    }
+
+    it("should show Flashing traffic light") {
+      assert(mkTrafficLightOrNullThenShow("flashing 100") === "Traffic light is flashing with a frequency of 100")
     }
 
     it("should show invalid traffic light") {

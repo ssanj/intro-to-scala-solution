@@ -25,7 +25,9 @@ object OptionExercises1 {
     * scala> safeMean(Nil)
     * = None
     **/
-  def safeMean(nums: List[Int]): Option[Double] = ???
+  def safeMean(nums: List[Int]): Option[Double] =
+    if (nums.isEmpty) None
+    else Option(nums.sum.toDouble / nums.length)
 
   /**
     * Safe constructors
@@ -40,7 +42,13 @@ object OptionExercises1 {
     * scala> mkTrafficLight("bob")
     * = None
     **/
-  def mkTrafficLight(str: String): Option[TrafficLight] = ???
+  def mkTrafficLight(str: String): Option[TrafficLight] = str match {
+    case "red"          => Option(Red)
+    case "yellow"       => Option(Yellow)
+    case "green"        => Option(Green)
+    case flashing(freq) => Option(Flashing(freq.toInt))
+    case _              => None
+  }
 
   /**
     * scala> mkTrafficLightThenShow("red")
@@ -60,7 +68,10 @@ object OptionExercises1 {
     * }
     * ```
     */
-  def mkTrafficLightThenShow(str: String): String = ???
+  def mkTrafficLightThenShow(str: String): String = mkTrafficLight(str) match {
+    case Some(value) => s"Traffic light is ${value.toString.toLowerCase}"
+    case None => s"Traffic light `${str}` is invalid"
+  }
 
   /**
     * scala> mkPerson("Bob", 20)
@@ -78,7 +89,10 @@ object OptionExercises1 {
     *
     * Hint: Don't forget every if needs an else!
     **/
-  def mkPerson(name: String, age: Int): Option[Person] = ???
+  def mkPerson(name: String, age: Int): Option[Person] = {
+    if (name.trim.isEmpty || age < 0) None
+    else Option(Person(name, age))
+  }
 
   /**
     * scala> mkPersonThenChangeName("Bob", 20, "John")
@@ -87,13 +101,14 @@ object OptionExercises1 {
     * scala> mkPersonThenChangeName("Bob", -1, "John")
     * = None
     *
-    * For simplicity, let's allow changing to an empty name, like:
-    *
-    * scala> mkPersonThenChangeName("Bob", 20, "")
-    * = Some(Person("", 20))
-    *
+   *
     * Hint: Use `mkPerson` and `changeName`
     **/
-  def mkPersonThenChangeName(oldName: String, age: Int, newName: String): Option[Person] = ???
+  def mkPersonThenChangeName(oldName: String, age: Int, newName: String): Option[Person] =
+        mkPerson(oldName, age) match {
+            case Some(Person(n, a)) => mkPerson(newName, a)
+            case None => None
+        }
+
 
 }

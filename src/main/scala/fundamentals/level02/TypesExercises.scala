@@ -95,6 +95,8 @@ object TypesExercises {
         }
   }
 
+  val flashing = """^flashing\s(\d+)$""".r
+
   /**
     * We have a new traffic light called Flashing, with a frequency, e.g. "flashing 20", "flashing 100"
     *
