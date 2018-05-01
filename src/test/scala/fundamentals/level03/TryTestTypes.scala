@@ -5,8 +5,8 @@ package fundamentals.level03
   * Once you have defined the `Employee` type in `TryExercises.scala`, remove `import TryTestTypes._`
   * from `TryExercisesTest.scala`.
   */
-object TryTestTypes {
+// object TryTestTypes {
 
-  case class Employee(name: String, age: Int, hasDirectReports: Boolean)
+//   case class Employee(name: String, age: Int, hasDirectReports: Boolean)
 
-}
+// }
