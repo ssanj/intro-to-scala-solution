@@ -122,7 +122,7 @@ object TryExercises {
     * Hint: Use `mkEmployee`
     */
   def fileToEmployees(filename: String): List[Either[TryError, Employee]] = {
-    val lines: List[String] = io.Source.fromFile(filename).getLines().toList
+    val lines: List[String] = scala.io.Source.fromFile(filename).getLines().toList
     lines.map(mkEmployee)
   }
 
