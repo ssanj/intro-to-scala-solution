@@ -54,7 +54,9 @@ object Exceptions2EitherExercises {
     * scala> getName("")
     * = Left(EmptyName(provided name is empty))
     **/
-  def getName(providedName: String): Either[AppError, String] = ???
+  def getName(providedName: String): Either[AppError, String] =
+    if (providedName.isEmpty) Left(EmptyName("provided name is empty"))
+    else Right(providedName)
 
   /**
     * Implement the function getAge that returns a Left with an InvalidAgeValue if the age provided can't
@@ -74,9 +76,11 @@ object Exceptions2EitherExercises {
     */
   def getAge(providedAge: String): Either[AppError, Int] =
     try {
-      ???
+      val age = providedAge.toInt
+      if (age >= 1 && age <= 120) Right(age)
+      else Left(InvalidAgeRange(s"provided age should be between 1-120: ${age}"))
     } catch {
-      case _: NumberFormatException => ???
+      case _: NumberFormatException => Left(InvalidAgeValue(s"provided age is invalid: ${providedAge}"))
     }
 
   /**
@@ -97,7 +101,11 @@ object Exceptions2EitherExercises {
     *
     * Hint: Use a for-comprehension to sequence the Eithers from getName and getAge
     */
-  def createPerson(name: String, age: String): Either[AppError, Person] = ???
+  def createPerson(name: String, age: String): Either[AppError, Person] =
+    for {
+       pName <- getName(name)
+       pAge  <- getAge(age)
+    } yield Person(pName, pAge)
 
   /**
     * Implement the function createValidPeople that uses the personStringPairs List
@@ -106,10 +114,11 @@ object Exceptions2EitherExercises {
     * scala> createValidPeople
     * = List(Person(Tokyo, 30), Person(Berlin, 43))
     *
-    * Hint: Use `map`, `createPerson` and `collect`
-    *
+    * Hint: Use `map` and `flatten`
+    * Hint: Use `toSeq` to convert Either into something that can be flattened.
     */
-  def createValidPeople: List[Person] = ???
+  def createValidPeople: List[Person] =
+    personStringPairs.map(p => createPerson(p._1, p._2).toSeq).flatten
 
   /**
     * Implement the function collectErrors that collects all the errors
@@ -121,7 +130,9 @@ object Exceptions2EitherExercises {
     * InvalidAgeRange(provided age should be between 1-120: 0),
     * EmptyName(provided name is empty))
     *
-    * Hint: Use `map`, `createPerson` and `collect`
+    * Hint: Use `map` and `flatten`
+    * Hint: Use `swap` to convert an Either[L, R] into an Either[R, L]
     */
-  def collectErrors: List[AppError] = ???
+  def collectErrors: List[AppError] =
+    personStringPairs.map(p => createPerson(p._1, p._2).swap.toSeq).flatten
 }
